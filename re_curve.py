@@ -14,6 +14,8 @@ parser.add_argument("-c", "--curve", type=str, default = "hilbert",  help='Name 
 parser.add_argument("-b", "--base" , type=int, default = 5     , help='Length of basic element')
 parser.add_argument("-g", "--gens" , type=int, default = 5     , help='Number of generations')
 parser.add_argument("-s", "--speed", type=int, default = 0     , help='Speed of turtle (1-10, 0=fastest)')
+parser.add_argument("-f", "--file", type=str, help='Filepath to save postscript to.')
+parser.add_argument("-r", "--rainbow", action="store_true", help='activates rainbow')
 args = parser.parse_args()
 
 #print Arguments
@@ -30,6 +32,25 @@ t.ht()
 base = args.base
 gens = args.gens
 
+def inc_rainbow():
+	global col
+	if col[0]==255 and 0<=col[1]<255 and col[2]==0:
+		col=(col[0], col[1]+1, col[2])
+	elif col[1]==255 and 0<=col[2]<255 and col[0]==0:
+		col=(col[0], col[1], col[2]+1)
+	elif col[2]==255 and 0<=col[0]<255 and col[1]==0:
+		col=(col[0]+1, col[1], col[2])
+	elif 0<col[0]<=255 and col[1]==255 and col[2]==0:
+		col=(col[0]-1, col[1], col[2])
+	elif 0<col[1]<=255 and col[2]==255 and col[0]==0:
+		col=(col[0], col[1]-1, col[2])
+	elif 0<col[2]<=255 and col[0]==255 and col[1]==0:
+		col=(col[0], col[1], col[2]-1)
+def go(t, len):
+	global col 
+	t.pencolor(col)
+	t.fd(len)
+	if args.rainbow : inc_rainbow()
 
 def dragon_start():
 	t.pd()
@@ -37,7 +58,7 @@ def dragon_start():
 
 def dragon(t, len, gen, dir):
 	if gen == 0:
-		t.fd(len)
+		go(t, len)
 	else:
 		if dir == 1:
 			dragon(t, len, gen-1, dir)
@@ -58,7 +79,9 @@ def vicsek_start():
 def vicsek(t, len, gen):
 	if gen == 0:
 		for i in range(0,2):
+			t.pencolor(col)
 			t.fd(len)
+			if args.rainbow : inc_rainbow()
 			t.lt(180)
 	else:
 		t.fd(len)
@@ -103,11 +126,17 @@ def sierpinski_arrowhead_start():
 def sierpinski_arrowhead(t, len, gen, dir):
 	if gen == 0:
 		t.lt(dir*60)
+		t.pencolor(col)
 		t.fd(len)
+		if args.rainbow : inc_rainbow()
 		t.rt(dir*60)
+		t.pencolor(col)
 		t.fd(len)
+		if args.rainbow : inc_rainbow()
 		t.rt(dir*60)
+		t.pencolor(col)
 		t.fd(len)
+		if args.rainbow : inc_rainbow()
 		t.lt(dir*60)
 	else:
 		t.lt(dir*60)
@@ -214,20 +243,20 @@ def hilbert_start():
 def hilbert(t, len, gen, dir):
 	t.lt(dir*90)
 	if gen == 0:
-		t.fd(len)
+		go(t, len)
 		t.rt(dir*90)
-		t.fd(len)
+		go(t, len)
 		t.rt(dir*90)
-		t.fd(len)
+		go(t, len)
 	else:
 		hilbert(t, len, gen-1, -dir)
-		t.fd(len)
+		go(t, len)
 		t.rt(dir*90)
 		hilbert(t, len, gen-1, dir)
-		t.fd(len)
+		go(t, len)
 		hilbert(t, len, gen-1, dir)
 		t.rt(dir*90)
-		t.fd(len)
+		go(t, len)
 		hilbert(t, len, gen-1, -dir)
 	t.lt(dir*90)
 
@@ -249,6 +278,11 @@ def koch(t, len, gen):
 		koch(t, len/3, gen-1)
 
 t.pu()
+screen.colormode(255)
+global col
+if args.rainbow:
+	col = (255, 0, 0)
+else: col = (0, 0, 0)
 switcher={
 	'marble'	: marble_start,
 	'hilbert'	: hilbert_start,
@@ -263,4 +297,7 @@ switcher={
 }
 func = switcher.get(args.curve)
 func()
+if args.file:
+	print('saved to ' +args.file)
+	t.getscreen().getcanvas().postscript(file=args.file)
 turtle.exitonclick()
