@@ -51,6 +51,27 @@ def go(t, len):
 		t.fd(len)
 		cyclebow()
 
+
+def peano_start():
+	t.goto(-base*3**gens/2, 0)
+	t.pd()
+	peano(t, base*3**gens, gens)
+
+def peano(t, len, gen):
+	if gen == 0:
+		go(t, len)
+	else:
+		peano(t, len/3, gen-1)
+		t.lt(180)
+		for i in range(0,4):
+			t.rt(90)
+			peano(t, len/3, gen-1)
+		for i in range(0,3):
+			t.lt(90)
+			peano(t, len/3, gen-1)
+		t.rt(90)
+		peano(t, len/3, gen-1)
+
 def dragon_start():
 	t.pd()
 	dragon(t, base, gens, 1)
