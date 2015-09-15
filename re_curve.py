@@ -319,7 +319,8 @@ switcher={
 	'tsquare'	: tsquare_start,
 	'vicsek'	: vicsek_start,
 	'dragon'	: dragon_start,
-	'snowflake'	: snowflake_start
+	'snowflake'	: snowflake_start,
+	'peano'		: peano_start
 }
 func = switcher.get(args.curve)
 func()
