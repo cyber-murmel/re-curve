@@ -34,18 +34,13 @@ gens = args.gens
 
 def inc_rainbow():
 	global col
-	if col[0]==255 and 0<=col[1]<255 and col[2]==0:
-		col=(col[0], col[1]+1, col[2])
-	elif col[1]==255 and 0<=col[2]<255 and col[0]==0:
-		col=(col[0], col[1], col[2]+1)
-	elif col[2]==255 and 0<=col[0]<255 and col[1]==0:
-		col=(col[0]+1, col[1], col[2])
-	elif 0<col[0]<=255 and col[1]==255 and col[2]==0:
-		col=(col[0]-1, col[1], col[2])
-	elif 0<col[1]<=255 and col[2]==255 and col[0]==0:
-		col=(col[0], col[1]-1, col[2])
-	elif 0<col[2]<=255 and col[0]==255 and col[1]==0:
-		col=(col[0], col[1], col[2]-1)
+	for i in range (0,3):
+		if 0<=col[(i)%3]<255 and col[(i+1)%3]==0 and col[(i+2)%3]==255:
+			col[i]=col[i]+1
+	for i in range (0,3):
+		if 0<col[i]<=255 and col[(i+1)%3]==255 and col[(i+2)%3]==0:
+			col[i]=col[i]-1
+
 def go(t, len):
 	global col 
 	t.pencolor(col)
@@ -281,8 +276,8 @@ t.pu()
 screen.colormode(255)
 global col
 if args.rainbow:
-	col = (255, 0, 0)
-else: col = (0, 0, 0)
+	col = [255, 0, 0]
+else: col = [0, 0, 0]
 switcher={
 	'marble'	: marble_start,
 	'hilbert'	: hilbert_start,
