@@ -290,6 +290,9 @@ def koch_start():
 	t.pd()
 	koch(t, base*3**gens, gens)
 
+def foobar():
+	pass
+
 def koch(t, len, gen):
 	if gen == 0:
 		go(t, len)
