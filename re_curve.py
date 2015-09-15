@@ -31,21 +31,25 @@ t.speed(args.speed%10)
 t.ht()
 base = args.base
 gens = args.gens
+rain = args.rainbow
 
-def inc_rainbow():
+def cyclebow():
 	global col
-	for i in range (0,3):
-		if 0<=col[(i)%3]<255 and col[(i+1)%3]==0 and col[(i+2)%3]==255:
-			col[i]=col[i]+1
-	for i in range (0,3):
-		if 0<col[i]<=255 and col[(i+1)%3]==255 and col[(i+2)%3]==0:
-			col[i]=col[i]-1
+	i = 0
+	while not ((0<=col[(i)%3]<255 and col[(i+1)%3]==0 and col[(i+2)%3]==255) or (0<col[i]<=255 and col[(i+1)%3]==255 and col[(i+2)%3]==0)):
+		i=i+1
+	if 0<=col[(i)%3]<255 and col[(i+1)%3]==0 and col[(i+2)%3]==255:
+		col[i]=col[i]+1
+	if 0<col[i]<=255 and col[(i+1)%3]==255 and col[(i+2)%3]==0:
+		col[i]=col[i]-1
 
 def go(t, len):
-	global col 
-	t.pencolor(col)
-	t.fd(len)
-	if args.rainbow : inc_rainbow()
+	if not rain : t.fd(len)
+	else :
+		global col 
+		t.pencolor(col)
+		t.fd(len)
+		cyclebow()
 
 def dragon_start():
 	t.pd()
@@ -76,7 +80,7 @@ def vicsek(t, len, gen):
 		for i in range(0,2):
 			t.pencolor(col)
 			t.fd(len)
-			if args.rainbow : inc_rainbow()
+			if args.rainbow : cyclebow()
 			t.lt(180)
 	else:
 		t.fd(len)
@@ -121,17 +125,11 @@ def sierpinski_arrowhead_start():
 def sierpinski_arrowhead(t, len, gen, dir):
 	if gen == 0:
 		t.lt(dir*60)
-		t.pencolor(col)
-		t.fd(len)
-		if args.rainbow : inc_rainbow()
+		go(t, len)
 		t.rt(dir*60)
-		t.pencolor(col)
-		t.fd(len)
-		if args.rainbow : inc_rainbow()
+		go(t, len)
 		t.rt(dir*60)
-		t.pencolor(col)
-		t.fd(len)
-		if args.rainbow : inc_rainbow()
+		go(t, len)
 		t.lt(dir*60)
 	else:
 		t.lt(dir*60)
@@ -150,7 +148,7 @@ def sierpinski_triangle_start():
 def sierpinski_triangle(t, len, gen):
 	if gen == 0:
 		for i in range(0,3):
-			t.fd(len)
+			go(t, len)
 			t.lt(120)
 	else:
 		for i in range(0,3):
@@ -168,14 +166,18 @@ def sierpinski_carpet_start():
 def sierpinski_carpet(t, len, gen):
 	if gen == 0:
 		for i in range(0,4):
-			t.fd(len)
+			go(t, len)
 			t.lt(90)
 	else:
 		for i in range(0,4):
 			sierpinski_carpet(t, len/3, gen-1)
+			t.pu()
 			t.fd(len/3)
+			t.pd()
 			sierpinski_carpet(t, len/3, gen-1)
+			t.pu()
 			t.fd(2*len/3)
+			t.pd()
 			t.lt(90)
 
 def pythagoras_start():
@@ -217,16 +219,16 @@ def marble_start():
 def marble(t, len, gen, dir):
 	t.lt(dir*60)
 	if gen == 0:
-		t.fd(len)
+		go(t, len)
 		t.rt(dir*120)
-		t.fd(len)
+		go(t, len)
 	else:
 		marble(t, len, gen-1, -dir)
-		t.fd(len)
+		go(t, len)
 		t.rt(dir*60)
 		marble(t, len, gen-1, dir)
 		t.rt(dir*60)
-		t.fd(len)
+		go(t, len)
 		marble(t, len, gen-1, -dir)
 	t.lt(dir*60)
 
@@ -255,14 +257,21 @@ def hilbert(t, len, gen, dir):
 		hilbert(t, len, gen-1, -dir)
 	t.lt(dir*90)
 
+def snowflake_start():
+	t.goto(-base*3**gens/2,+base*3**gens/3*math.sqrt(3)/2)
+	t.pd()
+	for i in range(0,3):
+		koch(t, base*3**gens, gens)
+		t.rt(120)
+
 def koch_start():
-	t.goto(-base*3**gens/2,0)
+	t.goto(-base*3**gens/2,-base*3**gens/3*math.sqrt(3)/2*1/2)
 	t.pd()
 	koch(t, base*3**gens, gens)
 
 def koch(t, len, gen):
 	if gen == 0:
-		t.fd(len)
+		go(t, len)
 	else:
 		koch(t, len/3, gen-1)
 		t.lt(60)
@@ -288,7 +297,8 @@ switcher={
 	'arrowhead'	: sierpinski_arrowhead_start,
 	'tsquare'	: tsquare_start,
 	'vicsek'	: vicsek_start,
-	'dragon'	: dragon_start
+	'dragon'	: dragon_start,
+	'snowflake'	: snowflake_start
 }
 func = switcher.get(args.curve)
 func()
