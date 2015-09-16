@@ -1,4 +1,4 @@
-#re-curve
+<h1>re-curve</h1>
 This program is capable of drawing nice fractals with python.
 ###preparation
 The requirement for this function is a running graphic envronment (X) an havin tk-inter installed.
