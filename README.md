@@ -4,7 +4,7 @@ This program is capable of drawin nice fractals with python.
 The requirement for this function is a running graphic envronment (X) an havin tk-inter installed.
 for Debian, Mint, Ubuntu:
 ```sudo apt-get install python python-tk idle python-pmw python-imaging```
-For ervery other system check out the tkinter [How to install](http://tkinter.unpythonic.net/wiki/How_to_install_Tkinter) webpage.
+For every other system check out the tkinter [How to install](http://tkinter.unpythonic.net/wiki/How_to_install_Tkinter) webpage.
 ###use
 The re_curve.py script is executed from command line with several optional arguments.
 ```
