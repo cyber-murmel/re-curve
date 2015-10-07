@@ -305,6 +305,32 @@ def koch(t, len, gen):
 		t.lt(60)
 		koch(t, len/3, gen-1)
 
+def Htree_start():
+	t.pd()
+	Htree(t, base*2**gens, gens)
+	Htree(t, base*2**gens, gens)
+
+def Htree(t, len, gen):
+	go(t, len)
+	t.lt(90)
+	go(t, len)
+	t.lt(90)
+	if gen != 0:
+		Htree(t, len/2, gen-1)
+		Htree(t, len/2, gen-1)
+	t.lt(90)
+	go(t, 2*len)
+	t.lt(90)
+	if gen != 0:
+		Htree(t, len/2, gen-1)
+		Htree(t, len/2, gen-1)
+	t.lt(90)
+	t.pu()
+	go(t, len)
+	t.lt(90)
+	go(t, len)
+	t.pd()
+
 t.pu()
 screen.colormode(255)
 global col
@@ -315,7 +341,7 @@ switcher={
 	'marble'	: marble_start,
 	'hilbert'	: hilbert_start,
 	'koch'		: koch_start,
-	'pythagoras': pythagoras_start,
+	'pythagoras'	: pythagoras_start,
 	'carpet'	: sierpinski_carpet_start,
 	'triangle'	: sierpinski_triangle_start,
 	'arrowhead'	: sierpinski_arrowhead_start,
@@ -323,7 +349,8 @@ switcher={
 	'vicsek'	: vicsek_start,
 	'dragon'	: dragon_start,
 	'snowflake'	: snowflake_start,
-	'peano'		: peano_start
+	'peano'		: peano_start,
+	'Htree'		: Htree_start
 }
 func = switcher.get(args.curve)
 func()
